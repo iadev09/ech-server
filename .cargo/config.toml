@@ -1,0 +1,33 @@
+[build]
+rustflags = ["--cfg", "reqwest_unstable"]
+
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/iadev09/h3?rev=02f1956a4b8ee5556a06038841948d0461d1b91c"]
+git = "https://github.com/iadev09/h3"
+rev = "02f1956a4b8ee5556a06038841948d0461d1b91c"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/iadev09/hyper-rustls?rev=3604e1af19f227927cd690b7c8d06ab6aedd4eec"]
+git = "https://github.com/iadev09/hyper-rustls"
+rev = "3604e1af19f227927cd690b7c8d06ab6aedd4eec"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/iadev09/quinn?rev=d6cb36f93138d44fad8f8bf8c10339373cc9a823"]
+git = "https://github.com/iadev09/quinn"
+rev = "d6cb36f93138d44fad8f8bf8c10339373cc9a823"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/iadev09/tokio-rustls?rev=30bc214e9897c12e1b3ec397a5005329a4c6b3e7"]
+git = "https://github.com/iadev09/tokio-rustls"
+rev = "30bc214e9897c12e1b3ec397a5005329a4c6b3e7"
+replace-with = "vendored-sources"
+
+[source."git+https://github.com/rustls/rustls?rev=12b98466f6a0e76bf7ef456ecbcc66fc529e240c"]
+git = "https://github.com/rustls/rustls"
+rev = "12b98466f6a0e76bf7ef456ecbcc66fc529e240c"
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor/crates"

@@ -1,0 +1,77 @@
+[package]
+name = "ech-server"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "server-h3"
+path = "src/bin/server_h3.rs"
+
+[[bin]]
+name = "server-h2"
+path = "src/bin/server_h2.rs"
+
+[[bin]]
+name = "client-h3"
+path = "src/bin/client_h3.rs"
+
+[[bin]]
+name = "client-h2"
+path = "src/bin/client_h2.rs"
+
+[[bin]]
+name = "gen_ech_assets"
+path = "src/bin/gen_ech_assets.rs"
+
+[[bin]]
+name = "gen_test_certs"
+path = "src/bin/gen_test_certs.rs"
+
+[dependencies]
+bytes = "1.10.1"
+http = "1"
+http-body-util = "0.1"
+hyper = { version = "1", features = ["full"] }
+hyper-util = { version = "0.1", features = ["tokio"] }
+tokio = { version = "1", features = ["full"] }
+tokio-rustls = { version = "0.26.4", features = ["rustls_0_24"] }
+rcgen = "0.14.7"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+rustls = { version = "0.24.0-dev.0", features = [] }
+rustls-aws-lc-rs = { version = "0.1.0-dev.0" }
+
+
+# Http3 core crates
+quinn = { git = "https://github.com/quinn-rs/quinn", default-features = false, features = [
+    "rustls-aws-lc-rs",
+    "runtime-tokio",
+] }
+
+h3 = { git = "https://github.com/hyperium/h3" }
+h3-quinn = { git = "https://github.com/hyperium/h3" }
+
+
+reqwest = { version = "0.13.2", default-features = false, features = [
+    "http2",
+    "http3",
+    "rustls_0_24"
+] }
+
+
+
+# used for ECH
+[patch.crates-io]
+rustls = { git = "https://github.com/rustls/rustls", rev = "12b98466f6a0e76bf7ef456ecbcc66fc529e240c" }
+rustls-aws-lc-rs = { git = "https://github.com/rustls/rustls", rev = "12b98466f6a0e76bf7ef456ecbcc66fc529e240c" }
+reqwest = { path = "vendor/reqwest" }
+hyper-rustls = { git = "https://github.com/iadev09/hyper-rustls", rev = "3604e1af19f227927cd690b7c8d06ab6aedd4eec" }
+tokio-rustls = { git = "https://github.com/iadev09/tokio-rustls", rev = "30bc214e9897c12e1b3ec397a5005329a4c6b3e7" }
+
+[patch."https://github.com/hyperium/h3"]
+h3 = { git = "https://github.com/iadev09/h3", rev = "02f1956a4b8ee5556a06038841948d0461d1b91c" }
+h3-quinn = { git = "https://github.com/iadev09/h3", rev = "02f1956a4b8ee5556a06038841948d0461d1b91c" }
+
+[patch."https://github.com/quinn-rs/quinn"]
+quinn = { git = "https://github.com/iadev09/quinn", rev = "d6cb36f93138d44fad8f8bf8c10339373cc9a823" }

@@ -1,0 +1,10 @@
+target/
+target-native/
+testdata/
+vendor/
+.idea/
+.env
+.nvimlog
+*.local
+.DS_Store
+
