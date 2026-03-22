@@ -24,9 +24,9 @@ git = "https://github.com/iadev09/tokio-rustls"
 rev = "30bc214e9897c12e1b3ec397a5005329a4c6b3e7"
 replace-with = "vendored-sources"
 
-[source."git+https://github.com/rustls/rustls?rev=2864aab6261bc0bdeb5564438677827ccbc2bdb5"]
+[source."git+https://github.com/rustls/rustls?rev=588d295bdc9e1cb00d65eafb09764ef9a1aa59b8"]
 git = "https://github.com/rustls/rustls"
-rev = "2864aab6261bc0bdeb5564438677827ccbc2bdb5"
+rev = "588d295bdc9e1cb00d65eafb09764ef9a1aa59b8"
 replace-with = "vendored-sources"
 
 [source.vendored-sources]
