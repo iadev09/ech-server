@@ -21,7 +21,7 @@ git -C "$repo_dir" fetch upstream "refs/pull/${pr_number}/head"
 git -C "$repo_dir" branch -f "$pr_latest_branch" FETCH_HEAD
 
 git -C "$repo_dir" switch -C "$pr_integ_branch" "$pr_latest_branch"
-git -C "$repo_dir" rebase "$base_branch"
+git -C "$repo_dir" rebase --committer-date-is-author-date "$base_branch"
 
 git -C "$repo_dir" push origin "$base_branch"
 git -C "$repo_dir" push --force-with-lease origin "$pr_integ_branch"
@@ -34,7 +34,19 @@ update_cargo_toml() {
   local file="$1"
   local tmp
   tmp="$(mktemp)"
-  sed -E 's#(https://github.com/rustls/rustls", rev = ")[0-9a-f]{40}#\1'"$NEW_REV"'#g' "$file" > "$tmp"
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in
+      'rustls = { git = "https://github.com/rustls/rustls", rev = "'*'" }')
+        printf 'rustls = { git = "https://github.com/rustls/rustls", rev = "%s" }\n' "$NEW_REV" >> "$tmp"
+        ;;
+      'rustls-aws-lc-rs = { git = "https://github.com/rustls/rustls", rev = "'*'" }')
+        printf 'rustls-aws-lc-rs = { git = "https://github.com/rustls/rustls", rev = "%s" }\n' "$NEW_REV" >> "$tmp"
+        ;;
+      *)
+        printf '%s\n' "$line" >> "$tmp"
+        ;;
+    esac
+  done < "$file"
   mv "$tmp" "$file"
 }
 
@@ -42,20 +54,26 @@ update_cargo_config() {
   local file="$1"
   local tmp
   tmp="$(mktemp)"
-  awk -v new_rev="$NEW_REV" '
-    BEGIN { in_rustls_block = 0 }
-    /^\[source\."git\+https:\/\/github\.com\/rustls\/rustls\?rev=/ {
-      gsub(/rev=[0-9a-f]{40}/, "rev=" new_rev)
-      in_rustls_block = 1
-      print
-      next
-    }
-    in_rustls_block && /^rev = "/ {
-      sub(/[0-9a-f]{40}/, new_rev)
-      in_rustls_block = 0
-    }
-    print
-  ' "$file" > "$tmp"
+  local in_rustls_block=0
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in
+      '[source."git+https://github.com/rustls/rustls?rev='*'"]')
+        printf '[source."git+https://github.com/rustls/rustls?rev=%s"]\n' "$NEW_REV" >> "$tmp"
+        in_rustls_block=1
+        ;;
+      'rev = "'*'"')
+        if [ "$in_rustls_block" -eq 1 ]; then
+          printf 'rev = "%s"\n' "$NEW_REV" >> "$tmp"
+          in_rustls_block=0
+        else
+          printf '%s\n' "$line" >> "$tmp"
+        fi
+        ;;
+      *)
+        printf '%s\n' "$line" >> "$tmp"
+        ;;
+    esac
+  done < "$file"
   mv "$tmp" "$file"
 }
 
@@ -63,13 +81,16 @@ update_cargo_lock() {
   local file="$1"
   local tmp
   tmp="$(mktemp)"
-  awk -v new_rev="$NEW_REV" '
-    {
-      gsub(/git\+https:\/\/github\.com\/rustls\/rustls\?rev=[0-9a-f]{40}#[0-9a-f]{40}/,
-           "git+https://github.com/rustls/rustls?rev=" new_rev "#" new_rev)
-      print
-    }
-  ' "$file" > "$tmp"
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in
+      'source = "git+https://github.com/rustls/rustls?rev='*'#'*'"')
+        printf 'source = "git+https://github.com/rustls/rustls?rev=%s#%s"\n' "$NEW_REV" "$NEW_REV" >> "$tmp"
+        ;;
+      *)
+        printf '%s\n' "$line" >> "$tmp"
+        ;;
+    esac
+  done < "$file"
   mv "$tmp" "$file"
 }
 
@@ -77,6 +98,17 @@ update_cargo_toml "$project_dir/Cargo.toml"
 update_cargo_config "$project_dir/.cargo/config.toml"
 if [ -f "$project_dir/Cargo.lock" ]; then
   update_cargo_lock "$project_dir/Cargo.lock"
+fi
+
+commit_files=("$project_dir/Cargo.toml" "$project_dir/.cargo/config.toml")
+if [ -f "$project_dir/Cargo.lock" ]; then
+  commit_files+=("$project_dir/Cargo.lock")
+fi
+
+if ! git -C "$project_dir" diff --quiet -- "${commit_files[@]}"; then
+  short_rev="${final_rev:0:7}"
+  git -C "$project_dir" add -- "${commit_files[@]}"
+  git -C "$project_dir" commit -m "sync rustls PR #${pr_number} to ${short_rev}"
 fi
 
 echo
