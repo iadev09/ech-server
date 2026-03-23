@@ -63,8 +63,8 @@ reqwest = { version = "0.13.2", default-features = false, features = [
 
 # used for ECH
 [patch.crates-io]
-rustls = { git = "https://github.com/rustls/rustls", rev = "18175434098325af94e2b62e7c4f4c67e46071a7" }
-rustls-aws-lc-rs = { git = "https://github.com/rustls/rustls", rev = "18175434098325af94e2b62e7c4f4c67e46071a7" }
+rustls = { git = "https://github.com/rustls/rustls", rev = "70c3962b17e7c45e9d162a6981ca7527747471da" }
+rustls-aws-lc-rs = { git = "https://github.com/rustls/rustls", rev = "70c3962b17e7c45e9d162a6981ca7527747471da" }
 reqwest = { path = "vendor/reqwest" }
 hyper-rustls = { git = "https://github.com/iadev09/hyper-rustls", rev = "3604e1af19f227927cd690b7c8d06ab6aedd4eec" }
 tokio-rustls = { git = "https://github.com/iadev09/tokio-rustls", rev = "30bc214e9897c12e1b3ec397a5005329a4c6b3e7" }

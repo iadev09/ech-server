@@ -1110,7 +1110,7 @@ dependencies = [
 [[package]]
 name = "rustls"
 version = "0.24.0-dev.0"
-source = "git+https://github.com/rustls/rustls?rev=18175434098325af94e2b62e7c4f4c67e46071a7#18175434098325af94e2b62e7c4f4c67e46071a7"
+source = "git+https://github.com/rustls/rustls?rev=70c3962b17e7c45e9d162a6981ca7527747471da#70c3962b17e7c45e9d162a6981ca7527747471da"
 dependencies = [
  "log",
  "once_cell",
@@ -1123,7 +1123,7 @@ dependencies = [
 [[package]]
 name = "rustls-aws-lc-rs"
 version = "0.1.0-dev.0"
-source = "git+https://github.com/rustls/rustls?rev=18175434098325af94e2b62e7c4f4c67e46071a7#18175434098325af94e2b62e7c4f4c67e46071a7"
+source = "git+https://github.com/rustls/rustls?rev=70c3962b17e7c45e9d162a6981ca7527747471da#70c3962b17e7c45e9d162a6981ca7527747471da"
 dependencies = [
  "aws-lc-rs",
  "rustls 0.24.0-dev.0",
